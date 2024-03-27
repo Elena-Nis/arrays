@@ -9,7 +9,7 @@ public class EvenOddComparator implements Comparator<Integer> {
 		int res=1;
 //if(o1%2==0&&o2%2==0)res=o1.compareTo(o2);
 //if (o1%2!=0&&o2%2!=0) res=(o1.compareTo(o2))*(-1);	
-//if(o1%2==0&&o2%2!=0)res=-1;
+//if(o1%2==0&&o2%2!=0)res=-1; 
 //return res;
 		
 //		if((o1%2==0&&o2%2==0)||(o1%2!=0&&o2%2!=0)) 
