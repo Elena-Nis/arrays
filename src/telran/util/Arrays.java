@@ -1,6 +1,7 @@
 package telran.util;
 
 import java.util.Comparator;
+import java.util.function.Predicate;
 
 public class Arrays {
 	public static  <T> int indexOf(T[] array, T element) {
@@ -29,24 +30,73 @@ public class Arrays {
 		
 	}
 	public static <T> void bubbleSort(T[] array, Comparator<T> comp) {
-		int len=array.length;
-		int i;
-		boolean flag = true;
-		while(flag) 
-		{
-			flag=false;
-		    for(i=1;i<len;i++) 
-		    {
-			    if(comp.compare(array[i-1], array[i])>0) 
-			    {
-				T var = array[i-1];
-				array[i-1]=array[i];
-				array[i]=var;
-				flag=true;
-			    }
-		   }
-		len=i;
-		
+		boolean isUnsorted = true;
+		int length = array.length;
+		while(isUnsorted) {
+			length--;
+			isUnsorted = false;
+			for(int i = 0; i < length; i++) {
+				if(comp.compare(array[i], array[i + 1]) > 0) {
+					swap(array, i, i + 1);
+					isUnsorted = true;
+				}
+			}
 		}
 	}
+
+	private static <T> void swap(T[] array, int i, int j) {
+		T tmp = array[i];
+		array[i] = array[j];
+		array[j] =tmp;
+		
+	}
+	public static <T> int binarySearch(T[] array, T key, Comparator<T> comp) {
+		int left=0;
+		int right=array.length-1;
+		int resComp=-1;
+		int middle=right/2;
+		int res=middle;
+		do {
+			resComp=comp.compare(array[middle],key);
+ 			if(resComp<0) left=middle+1;
+ 			if(resComp>0) right=middle-1; 
+ 			middle = (left+right)/2;
+     	} while(left<=right&&resComp!=0);
+		if(resComp==0) res=middle;
+		else res = -left;
+		return res;
+	}
+	public static <T> T[] search(T[] array, Predicate<T> predicate) {
+		//Impossible to allocate memory for generic array
+		//Only Arrays.copyOf may be used
+		T[] arResult = java.util.Arrays.copyOf(array, array.length);
+		int index = 0;
+		for(int i = 0; i < array.length; i++) {
+			if(predicate.test(array[i])) {
+				arResult[index++] = array[i];
+			}
+		}
+		return java.util.Arrays.copyOf(arResult,index);
+	}
+	
+	public static <T> T[] removeIf(T[] array, Predicate<T> predicate) {
+		//Option 1
+		//T[] resArray = search(array, predicate.negate());
+		//Option 2
+		T[] resArray  = searchNew(array,  predicate);
+			
+		return resArray;
+	}
+	public static <T> T[] searchNew(T[] array, Predicate<T> predicate) {
+		T[] arResult = java.util.Arrays.copyOf(array, array.length);
+		int index = 0;
+		for(int i = 0; i < array.length; i++) {
+			if(!predicate.test(array[i])) {
+				arResult[index++] = array[i];
+			}
+		}
+		return java.util.Arrays.copyOf(arResult,index);
+	}
+			 
 }
+
