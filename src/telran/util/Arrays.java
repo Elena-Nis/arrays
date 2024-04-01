@@ -63,7 +63,7 @@ public class Arrays {
  			middle = (left+right)/2;
      	} while(left<=right&&resComp!=0);
 		if(resComp==0) res=middle;
-		else res = -left;
+		else res = -left-1;
 		return res;
 	}
 	public static <T> T[] search(T[] array, Predicate<T> predicate) {
@@ -82,21 +82,13 @@ public class Arrays {
 	public static <T> T[] removeIf(T[] array, Predicate<T> predicate) {
 		//Option 1
 		//T[] resArray = search(array, predicate.negate());
+		//return resArray;
 		//Option 2
-		T[] resArray  = searchNew(array,  predicate);
-			
-		return resArray;
+		return search(array, a -> !predicate.test(a));
+		 
 	}
-	public static <T> T[] searchNew(T[] array, Predicate<T> predicate) {
-		T[] arResult = java.util.Arrays.copyOf(array, array.length);
-		int index = 0;
-		for(int i = 0; i < array.length; i++) {
-			if(!predicate.test(array[i])) {
-				arResult[index++] = array[i];
-			}
-		}
-		return java.util.Arrays.copyOf(arResult,index);
-	}
-			 
+   
 }
+			 
+ 
 
