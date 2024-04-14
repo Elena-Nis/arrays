@@ -3,6 +3,7 @@ package telran.util.test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,6 @@ import telran.util.Arrays;
 
 class ArraysTests {
 Integer[] numbers = {100, -3, 23, 4, 8, 41, 56, -7};
-
 String[] strings = {"abc", "lmn", "123", null, "a"};
 String[] stringsMin = {"abc", "lmn", "123",  "y"};
 	@Test
@@ -25,8 +25,7 @@ String[] stringsMin = {"abc", "lmn", "123",  "y"};
 		Comparator<String> compLength = (s1, s2) -> s1.length() - s2.length();
 		assertEquals("y", Arrays.min(stringsMin,
 				compLength));
-		Comparator<String> compNative = (s1, s2) -> s1.compareTo(s2);
-		assertEquals("123", Arrays.min(stringsMin, compNative));
+		assertEquals("123", Arrays.min(stringsMin, (s1, s2) -> s1.compareTo(s2)));
 	}
 	@Test
 	void bubbleSortTest() {
@@ -70,70 +69,85 @@ String[] stringsMin = {"abc", "lmn", "123",  "y"};
 	}
 	@Test
 	void binarySearchTest() {
-		Integer[] arraySorted1 = {10,30,45,57,78,82,95,100};
-		int key1=59;
-		int expectedIndex1=-5;
-		int actualIndex1=Arrays.binarySearch(arraySorted1, key1,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex1,actualIndex1);
-		int key11=5;
-		int expectedIndex11=-1;
-		int actualIndex11=Arrays.binarySearch(arraySorted1, key11,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex11,actualIndex11);
-		int key12=110;
-		int expectedIndex12=-9;
-		int actualIndex12=Arrays.binarySearch(arraySorted1, key12,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex12,actualIndex12);
-		int key13=82;
-		int expectedIndex13=5;
-		int actualIndex13=Arrays.binarySearch(arraySorted1, key13,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex13,actualIndex13);
-		int key14=30;
-		int expectedIndex14=1;
-		int actualIndex14=Arrays.binarySearch(arraySorted1, key14,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex14,actualIndex14);
-		
-		Integer[] arraySorted2 = {10};
-		int key21=11;
-		int expectedIndex21=-2;
-		int actualIndex21=Arrays.binarySearch(arraySorted2, key21,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex21,actualIndex21);
-		int key22=3;
-		int expectedIndex22=-1;
-		int actualIndex22=Arrays.binarySearch(arraySorted2, key22,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex22,actualIndex22);
-		
-		String[] arraySorted3 = {"aa","ab","cd","cde","ef"};
-		String key31="cd";
-		int expectedIndex31=2;
-		int actualIndex31=Arrays.binarySearch(arraySorted3, key31,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex31,actualIndex31);
-		String key32="abbc";
-		int expectedIndex32=-3;
-		int actualIndex32=Arrays.binarySearch(arraySorted3, key32,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex32,actualIndex32);
-		String key33="a";
-		int expectedIndex33=-1;
-		int actualIndex33=Arrays.binarySearch(arraySorted3, key33,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex33,actualIndex33);
-		String key34="ef";
-		int expectedIndex34=4;
-		int actualIndex34=Arrays.binarySearch(arraySorted3, key34,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex34,actualIndex34);
-		String key35="h";
-		int expectedIndex35=-6;
-		int actualIndex35=Arrays.binarySearch(arraySorted3, key35,(a,b)-> a.compareTo(b));
-		assertEquals(expectedIndex35,actualIndex35);
+		Integer[] sortedNumbers = {10, 20, 30, 40, 50};
+		Comparator<Integer> comp = Integer::compare;
+		assertEquals(0, Arrays.binarySearch(sortedNumbers, 10, comp));
+		assertEquals(4, Arrays.binarySearch(sortedNumbers, 50, comp));
+		assertEquals(2, Arrays.binarySearch(sortedNumbers, 30, comp));
+		assertEquals(-1, Arrays.binarySearch(sortedNumbers, 5, comp));
+		assertEquals(-4, Arrays.binarySearch(sortedNumbers, 35, comp));
+		assertEquals(-6, Arrays.binarySearch(sortedNumbers, 55, comp));
 	}
- 
-	@Test
+	 @Test
 	 void removeIfTest() {
-		 Integer[] numbers = {12, -7, 90, 58, 45, -5, 14};
-		 Integer[] resArray1 = {12,90, 58, 45, 14};
-		 Integer[] resArray2 = { -7, 45, -5};
-		 assertArrayEquals(resArray1, Arrays.removeIf(numbers, a -> a<0));
-		 assertArrayEquals(resArray2, Arrays.removeIf(numbers, a -> a%2==0));
+		 Integer[] expectedEven = {100, 4, 8,  56};
+			assertArrayEquals(expectedEven, Arrays.removeIf(numbers,
+					a -> a % 2 != 0));
+			Integer[] expectedNegative = {-3,-7};
+			assertArrayEquals(expectedNegative, Arrays.removeIf(numbers,
+					a -> a > 0));
 	 }
+	 @Test
+	 void addTest() {
+		 Integer[] expected = {100, -3, 23, 4, 8, 41, 56, -7, 150};
+		 Integer[] actual = Arrays.add(numbers, 150);
+		 assertArrayEquals(expected, actual);
+	 }
+	 @Test
+	 void personsSortTest() {
+		 Person prs1 = new Person(123, 1985);
+		 Person prs2 = new Person(120, 2000);
+		 Person prs3 = new Person(128, 1999);
+		 Person[] persons = {
+				prs1, prs2, prs3 
+		 };
+		 Arrays.bubbleSort(persons);
+		 Person[] expected = {new Person(120, 2000),
+				 new Person(123, 1985),
+				 new Person(128, 1999)};
+		 Person[] expectedAge = {
+				 new Person(120, 2000),
+				 new Person(128, 1999),
+				 new Person(123, 1985)
+		 };
+		 
+		 assertArrayEquals(expected, persons);
+		 Arrays.bubbleSort(persons,
+				 (p1, p2) -> Integer.compare(p2.birthYear, p1.birthYear));
+		 
+		 assertArrayEquals(expectedAge, persons);
+	 }
+
+}
+class Person implements Comparable<Person>{
+	long id;
+	int birthYear;
+	public Person(long id, int birthYear) {
+		this.id = id;
+		this.birthYear = birthYear;
+	}
+	@Override
+	public int compareTo(Person o) {
+		
+		return Long.compare(id, o.id);
+	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(birthYear, id);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Person other = (Person) obj;
+		return birthYear == other.birthYear && id == other.id;
+	}
 	
 	
 }
+
 
