@@ -1,13 +1,15 @@
 package telran.employees;
-
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
 import telran.util.Arrays;
-//SO far we don't consider optimization
-public class Company implements Iterable {
+public class Company implements Iterable<Employee>{
 	private Employee[] employees;
-	public void addEmployee(Employee empl) {
+	public Company(Employee[] employees) {
+		this.employees = Arrays.copy(employees);
+		Arrays.bubbleSort(this.employees);
+	}
+public void addEmployee(Employee empl) {
 		
 		if(empl==null) {
 			throw new IllegalArgumentException();
@@ -19,60 +21,58 @@ public class Company implements Iterable {
 		employees = Arrays.insert(employees, empl, -(index+1));
 	}
 	public Employee getEmployee(long id) {
-		 	int index = Arrays.binarySearch(
-			employees, new Employee(id, 0, ""), (e1,e2) -> e1.compareTo(e2));
-		return index<0 ? null : employees[index];
+		int index = Arrays.binarySearch(employees,  new Employee(id, 0, null), Comparator.naturalOrder());
+		return index < 0 ? null : employees[index];
 	}
 	public Employee removeEmployee(long id) {
-		Employee removedEmployee = getEmployee(id);
-		if(removedEmployee == null) {
-			throw new NoSuchElementException();
+		Employee result = getEmployee(id);
+		if(result == null) {
+			throw new NoSuchElementException
+			(String.format("Employee with id %d doesn't exist", id));
 		}
-		employees = Arrays.removeIf(employees, e -> e.getId()==id);
-		return removedEmployee;
+		employees = Arrays.removeIf(employees, e -> e.getId() == id);
+		return result;
 	}
 	public int getDepartmentBudget(String department) {
-		Employee[] emps = Arrays.search(employees, e -> e.getDepartment().equals(department));
-		int budget = 0;
-		for(Employee emp : emps) {
-			budget += emp.getBasicSalary();
+		int result = 0;
+		for(Employee empl: employees) {
+			if(empl.getDepartment().equals(department)) {
+				result += empl.computeSalary();
+			}
 		}
-		return budget;
+		return result;
 	}
-	public Company(Employee[] employees) {
-		 
-		if(employees != null) {
-			this.employees = Arrays.copy(employees);
-			Arrays.bubbleSort(this.employees);
-		} else {
-			this.employees = new Employee[0];
-		}
-	}
-	 
 	public Employee[] getAllEmployees() {
 		return Arrays.copy(employees);
 	}
+	public String[] getDepartments() {
+		String[] departments = {};
+		for(Employee empl: employees) {
+			String dep = empl.getDepartment();
+			if (Arrays.indexOf(departments, dep) < 0) 
+				departments=Arrays.add(departments, dep);
+		}
+		return departments;
+	}
 	@Override
 	public Iterator<Employee> iterator() {
-		
 		return new CompanyIterator();
 	}
 	private class CompanyIterator implements Iterator<Employee> {
-		 
-		int current = 0;
+		int currentIndex = 0;
 		@Override
 		public boolean hasNext() {
-			 
-			return current < employees.length;
+			return currentIndex < employees.length;
 		}
-
 		@Override
 		public Employee next() {
 			if(!hasNext()) {
-                throw new NoSuchElementException();
+				throw new NoSuchElementException();
 			}
-			return employees[current++];
+			return employees[currentIndex++];
 		}
-		
+
 	}
+
+	
 }

@@ -1,7 +1,5 @@
 package telran.employees;
-
 import java.util.Objects;
-
 public class Employee implements Comparable<Employee>{
 	private long id;
 	private int basicSalary;
@@ -14,8 +12,7 @@ public class Employee implements Comparable<Employee>{
 	}
 	@Override
 	public int compareTo(Employee o) {
-		 
-		return Long.compare(this.id, o.id);
+		return Long.compare(id, o.id);
 	}
 	public long getId() {
 		return id;
@@ -25,6 +22,9 @@ public class Employee implements Comparable<Employee>{
 	}
 	public String getDepartment() {
 		return department;
+	}
+	public int computeSalary() {
+		return basicSalary;
 	}
 	@Override
 	public int hashCode() {
