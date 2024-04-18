@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import telran.util.Arrays;
+import telran.util.IteratorUtils;
 
 public class Canvas extends Shape implements Iterable<Shape> {
    protected Shape[] shapes=new Shape[0];
@@ -25,23 +26,26 @@ public class Canvas extends Shape implements Iterable<Shape> {
 
    @Override
    public Iterator<Shape> iterator() {
-	   return new CanvasIterator();
+	  return IteratorUtils.createIterator(shapes);
    }
-   private class CanvasIterator implements Iterator<Shape> {
-	   int currentIndex = 0;
-	   @Override
-	   public boolean hasNext() {
-		   return currentIndex < shapes.length;
-	   }
-	   @Override
-	   public Shape next() {
-		   if(!hasNext()) {
-			   throw new NoSuchElementException();
-		   }
-		   return shapes[currentIndex++];
-	   }
-
-}
+	   
+//	   return new CanvasIterator();
+//   }
+//   private class CanvasIterator implements Iterator<Shape> {
+//	   int currentIndex = 0;
+//	   @Override
+//	   public boolean hasNext() {
+//		   return currentIndex < shapes.length;
+//	   }
+//	   @Override
+//	   public Shape next() {
+//		   if(!hasNext()) {
+//			   throw new NoSuchElementException();
+//		   }
+//		   return shapes[currentIndex++];
+//	   }
+//
+//}
    @Override
    public int square() {
 	   int result = 0;
