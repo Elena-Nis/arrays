@@ -7,20 +7,20 @@ import telran.shapes.Shape;
 
 
 public class IteratorUtils {
-	   public static  Iterator<Shape> createIterator(Shape[] shapes) {
-		   return new Iterator<Shape>(){
+	   public static <T> Iterator<T> createIterator(T[] array) {
+		   return new Iterator<T>(){
 	   
 		   private int currentIndex = 0;
 		   @Override
 		   public boolean hasNext() {
-			   return currentIndex < shapes.length;
+			   return currentIndex < array.length;
 		   }
 		   @Override
-		   public Shape next() {
+		   public T next() {
 			   if(!hasNext()) {
 				   throw new NoSuchElementException();
 			   }
-			   return shapes[currentIndex++];
+			   return array[currentIndex++];
 		   }
 
 	    };
